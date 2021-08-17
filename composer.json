@@ -1,0 +1,36 @@
+{
+    "name": "mbagnall/ecfr",
+    "description": "PHP library for the Electronic Code of Federal Regulations (eCFR)",
+    "keywords": [
+        "ecfr",
+        "Electronic Code of Federal Regulations",
+        "Federal Regulations",
+        "Regulationbs"
+    ],
+    "homepage": "https://github.com/ElusiveMind/ecfr",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Bagnall",
+            "homepage": "https://www.bagnall.io",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : ">=7.2",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "eCFR\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "eCFR\\Test\\": "tests"
+        }
+    }
+}
