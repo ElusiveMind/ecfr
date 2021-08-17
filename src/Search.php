@@ -22,93 +22,109 @@ final class Search {
   }
   
   /**
-   * Returns collections available
+   * The standard set of $objRequestors used for all search queries
+   */
+  public function standardSet(SearchRequestor $objRequestor, Uri &$objUri) : void {
+    if (!empty($objRequestor->getQuery()) {
+      $objUri = $objUri->withQueryValue($objUri, 'query', $objRequestor->getQuery());
+    }
+
+    if (!empty($objRequestor->getDate()) {
+      $objUri = $objUri->withQueryValue($objUri, 'date', $objRequestor->getDate());
+    }
+
+    if (!empty($objRequestor->getLastModifiedAfter()) {
+      $objUri = $objUri->withQueryValue($objUri, 'last_modified_date', $objRequestor->getLastModifiedAfter());
+    }
+
+    if (!empty($objRequestor->getLastModifiedOnOrAfter()) {
+      $objUri = $objUri->withQueryValue($objUri, 'last_modified_on_or_after', $objRequestor->getLastModifiedOnOrAfter());
+    }
+
+    if (!empty($objRequestor->getLastModifiedBefore()) {
+      $objUri = $objUri->withQueryValue($objUri, 'last_modified_before', $objRequestor->getLastModifiedBefore());
+    }
+
+    if (!empty($objRequestor->getLastModifiedOnOrBefore()) {
+      $objUri = $objUri->withQueryValue($objUri, 'last_modified_on_or_before', $objRequestor->getLastModifiedOnOrBefore());
+    }
+  }
+
+  /**
+   * Returns search results available
    * 
    * @return array
    */
   public function results(SearchRequestor $objRequestor) : array {
     $objUri = new Uri();
     $strPath = self::ENDPOINT . '/results';
-    
-    return $this->objApi->getArray($objUri->withPath(self::ENDPOINT));
+
+    // Search specific query values
+    $objUri = $objUri->withQueryValue($objUri, 'per_page', $objRequestor->getPerPage());
+    $objUri = $objUri->withQueryValue($objUri, 'page', $objRequestor->getPage());
+    $objUri = $objUri->withQueryValue($objUri, 'order', $objRequestor->getOrder());
+    return $this->execute($objRequestor, $objUri);
   }
 
   /**
-   * Returns a type of collection
-   *
-   * @param CollectionAbstractRequestor $objRequestor
-   * @return array
-   * @throws LogicException
-   * @throws RunTimeException
+   * Returns search result count
    */
-  public function item(CollectionAbstractRequestor $objRequestor) : array
-  {
-      if (empty($objRequestor->getStrCollectionCode())) {
-          throw new LogicException('CollectionRequestor::strCollectionCode is required');
-      }
-      
-      $objUri = new Uri();
-      $objUri = $objUri->withQueryValue($objUri, 'pageSize', $objRequestor->getIntPageSize());
-      $objUri = $objUri->withQueryValue($objUri, 'offset', $objRequestor->getIntOffSet());
-      
-      $strPath = self::ENDPOINT . '/' . $objRequestor->getStrCollectionCode();
-
-      $objStartDate = $objRequestor->getObjStartDate();
-
-      if (!$objStartDate instanceof \DateTime) {
-          throw new RunTimeException('Start Date is required');
-      }
-
-      $strPath.= '/' . urlencode($objStartDate->format('Y-m-d')) . 'T';
-      $strPath.= urlencode($objStartDate->format('H:i:s')) . 'Z';
-
-      if ($objRequestor->getObjEndDate()) {
-          $strPath.= '/' . urlencode($objRequestor->getObjEndDate()->format('Y-m-d')) . 'T';
-          $strPath.= urlencode($objRequestor->getObjEndDate()->format('H:i:s')) . 'Z';
-      }
-      
-      $objResult = $this->objApi->getArray($objUri->withPath($strPath));
-      
-      return $this->filterPackages($objResult, $objRequestor);
+  public function count(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/count';
+    return $this->execute($objRequestor, $objUri);
   }
 
   /**
-   * Filters packages
-   *
-   * @param array $arrResult
-   * @param CollectionAbstractRequestor $objRequestor
-   * @return array
+   * Returns search summary details
    */
-  private function filterPackages(array $arrResult, CollectionAbstractRequestor $objRequestor) : array
-  {
-    $strDocClass = $objRequestor->getStrDocClass();
-    $strTitle = $objRequestor->getStrTitle();
-    $strPackageId = $objRequestor->getStrPackageId();
+  public function summary(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/summary';
+    return $this->execute($objRequestor, $objUri);
+  }
 
-    if (!empty($strDocClass)) {
-        $arrResult['packages'] = array_filter($arrResult['packages'], function ($arrPackage) use ($strDocClass) {
-            if ($arrPackage['docClass'] == $strDocClass) {
-                return $arrPackage;
-            }
-        });
-    }
+  /**
+   * Returns search result counts by date
+   */
+  public function countsDaily(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/counts/daily';
+    return $this->execute($objRequestor, $objUri);
+  }
 
-    if (!empty($strTitle)) {
-        $arrResult['packages'] = array_filter($arrResult['packages'], function ($arrResult) use ($strTitle) {
-            if (preg_match("/$strTitle/i", $arrResult['title'])) {
-                return $arrResult;
-            }
-        });
-    }
+  /**
+   * Returns search result counts by title
+   */
+  public function countsTitle(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/counts/titles';
+    return $this->execute($objRequestor, $objUri);
+  }
 
-    if (!empty($strPackageId)) {
-        $arrResult['packages'] = array_filter($arrResult['packages'], function ($arrResult) use ($strPackageId) {
-            if ($arrResult['packageId'] == $strPackageId) {
-                return $arrResult;
-            }
-        });
-    }
+  /**
+   * Returns search result counts by hierarchy
+   */
+  public function countsDaily(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/counts/hierarchy';
+    return $this->execute($objRequestor, $objUri);
+  }
 
-    return $arrResult;
+  /**
+   * Returns search suggestions
+   */
+  public function suggestions(SearchRequestor $objRequestor) : array {
+    $objUri = new Uri();
+    $strPath = self::ENDPOINT . '/counts/suggestions';
+    return $this->execute($objRequestor, $objUri);
+  }
+
+  /**
+   * Execute our query as it is passed by the parent function.
+   */
+  private function execute(SearchRequestor $objRequestor, Uri $objUri) : array {
+    $this->standardSet($objRequestor, $objUri);
+    return $this->objApi->getArray($objUri->withPath($strPath));
   }
 }

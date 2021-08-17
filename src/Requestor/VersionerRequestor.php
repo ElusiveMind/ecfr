@@ -1,79 +1,106 @@
 <?php
 
-namespace GovInfo\Requestor;
+namespace eCFR\Requestor;
 
-final class PublishedAbstractRequestor extends AbstractRequestor
-{
-    private $strStartDate = '';
-    private $strEndDate = '';
-    private $strCollectionCode = '';
-    private $strCongress = '';
-    private $strDocClass = '';
-    private $strModifiedSince = '';
+final class VersionerRequestor {
 
-    public function setStrCollectionCode(string $strCollectionCode) : self
-    {
-        $this->strCollectionCode = $strCollectionCode;
-        return $this;
+  private $date = NULL;
+  private $title = NULL;
+  private $subtitle = NULL;
+  private $chapter = NULL;
+  private $subchapter = NULL;
+  private $part = NULL;
+  private $subpart = NULL;
+  private $section = NULL;
+  private $appendix = NULL;
+
+  public function setDate(string $date) : self {
+    if ($this->validateDate($date) === TRUE) {
+      throw new LogicException('Date must be a valid yyyy-mm-dd value.');
     }
+    $this->date = $date;
+    return $this;
+  }
 
-    public function setStrStartDate(string $strStartDate) : self
-    {
-        $this->strStartDate = $strStartDate;
-        return $this;
-    }
+  public function setTitle(string $title) : self {
+    $this->title = $title;
+    return $this;
+  }
 
-    public function setStrEndDate(string $strEndDate) : self
-    {
-        $this->strEndDate = $strEndDate;
-        return $this;
-    }
+  public function setSubtitle(string $subtitle) : self {
+    $this->subtitle = $subtitle;
+    return $this;
+  }
 
-    public function setStrDocClass(string $strDocClass) : self
-    {
-        $this->strDocClass = $strDocClass;
-        return $this;
-    }
+  public function setChapter(string $chapter) : self {
+    $this->chapter = $chapter;
+    return $this;
+  }
 
-    public function setStrCongress(string $strCongress) : self
-    {
-        $this->strCongress = $strCongress;
-        return $this;
-    }
+  public function setSubchapter(string $subchapter) : self {
+    $this->subchapter = $subchapter;
+    return $this;
+  }
 
-    public function setStrModifiedSince(string $strModifiedSince) : self
-    {
-        $this->strModifiedSince = $strModifiedSince;
-        return $this;
-    }    
+  public function setPart(string $part) : self {
+    $this->part = $part;
+    return $this;
+  }    
 
-    public function getStrCollectionCode() : string
-    {
-        return $this->strCollectionCode;
-    }
+  public function setSection(string $section) : self {
+    $this->section = $section;
+    return $this;
+  }    
 
-    public function getStrStartDate()
-    {
-        return $this->strStartDate;
-    }
+  public function setAppendix(string $appendix) : self {
+    $this->appendix = $appendix;
+    return $this;
+  }    
+  
+  public function getDate() : string {
+    return $this->date;
+  }
 
-    public function getStrEndDate()
-    {
-        return $this->strEndDate;
-    }
+  public function getTitle() : string {
+    return $this->title;
+  }
 
-    public function getStrDocClass() : string
-    {
-        return $this->strDocClass;
-    }
+  public function getSubtitle() :string {
+    return $this->subtitle;
+  }
 
-    public function getStrCongress() : string
-    {
-        return $this->strCongress;
-    }
+  public function getChapter() : string {
+    return $this->chapter;
+  }
 
-    public function getStrModifiedSince() : string
-    {
-        return $this->strModifiedSince;
-    } 
+  public function getSubChapter() : string {
+    return $this->subChapter;
+  }
+
+  public function getPart() : string {
+    return $this->getPart;
+  }
+
+  public function getSubpart() : string {
+    return $this->subpart;
+  }
+
+  public function getSection() : string {
+    return $this->section;
+  }
+
+  public function getAppendix() : string {
+    return $this->appendix;
+  }
+
+  /**
+   * Check the date to make sure things passed to the API are valid.
+   * https://stackoverflow.com/questions/19271381/correctly-determine-if-date-string-is-a-valid-date-in-that-format/19271434
+   */
+  private function validateDate($date, $format = 'Y-m-d') {
+    $d = DateTime::createFromFormat($format, $date);
+    // The Y ( 4 digits year ) returns TRUE for any integer with any number 
+    // of digits so changing the comparison from == to === fixes the issue.
+    return $d && $d->format($format) === $date;
+  }
 }

@@ -9,8 +9,8 @@ final class SearchRequestor{
   private $lastModifiedBefore = NULL;
   private $lastModifiedOnOrAfter = NULL;
   private $lastModifiedOnOrBefore = NULL;
-  private $perPage = 0;
-  private $page = 0;
+  private $perPage = 20;
+  private $page = 1;
   private $order = 'relevance';
 
   public function setQuery(string $query) : self {
@@ -18,6 +18,10 @@ final class SearchRequestor{
       $this->query = $query;
     }
     return $this;
+  }
+  
+  public function getQuery() : string {
+    return $this->query;
   }
 
   public function setDate(string $date) : self {
@@ -28,7 +32,7 @@ final class SearchRequestor{
     return $this;
   }
 
-  public function getDate() {
+  public function getDate() : string {
     return $this->date;
   }
 
@@ -40,7 +44,7 @@ final class SearchRequestor{
     return $this;
   }
 
-  public function getPerPage() {
+  public function getPerPage() : int {
     return $this->perPage;
   }
 
@@ -52,7 +56,7 @@ final class SearchRequestor{
     return $this;
   }
 
-  public function getPage() {
+  public function getPage() : int {
     return $this->page;
   }
 
@@ -65,7 +69,7 @@ final class SearchRequestor{
     return $this;
   }
 
-  public function getOrder() {
+  public function getOrder() : string {
     return $this->order;
   }
 
@@ -77,7 +81,7 @@ final class SearchRequestor{
     return $this;
   }
 
-  public function getLastModifiedAfter() {
+  public function getLastModifiedAfter() : string  {
     return $this->lastModifiedAfter;
   }
 

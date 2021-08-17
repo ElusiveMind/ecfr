@@ -4,132 +4,123 @@ namespace eCFR;
 
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Response;
-use GovInfo\Requestor\PackageAbstractRequestor;
+use eCFR\Requestor\VersionerRequestor;
 use LogicException;
 
-final class Package
-{
+final class Package {
+
   use EndpointTrait;
 
-  private const ENDPOINT = 'packages';
+  private const ENDPOINT = 'api/versioner/v1';
 
   /**
    * Constructs an instance
    *
    * @param Api $objApi
    */
-  public function __construct(Api $objApi)
-  {
-      $this->objApi = $objApi;
+  public function __construct(Api $objApi) {
+    $this->objApi = $objApi;
   }
 
   /**
-   * Gets package summary
-   *
-   * @param PackageAbstractRequestor $objRequestor
-   * @return array
+   * The standard set of $objRequestors used for all search queries
    */
-  public function summary(PackageAbstractRequestor $objRequestor) : array
-  {
-    $this->requireStrPackageId($objRequestor);
-
-    $objUri = new Uri();
-    $objUri = $objUri->withQueryValue($objUri, 'pageSize', $objRequestor->getIntPageSize());
-    $objUri = $objUri->withQueryValue($objUri, 'offset', $objRequestor->getIntOffSet());
-
-    $strPath = self::ENDPOINT . '/' . $objRequestor->getStrPackageId() . '/summary';
-
-    return $this->objApi->getArray($objUri->withPath($strPath));
-  }
-
-  /**
-   * Gets a package of a specified content type
-   *
-   * @param PackageAbstractRequestor $objRequestor
-   * @return Response
-   * @throws LogicException
-   */
-  public function contentType(PackageAbstractRequestor $objRequestor) : Response
-  {
-    $this->requireStrPackageId($objRequestor);
-
-    if (empty($objRequestor->getStrContentType())) {
-        throw new \LogicException('PackageRequestor::getStrContentType is required');
+  public function standardSet(SearchRequestor $objRequestor, Uri &$objUri) : void {
+    if (!empty($objRequestor->getSubtitle()) {
+      $objUri = $objUri->withQueryValue($objUri, 'subtitle', $objRequestor->getSubtitle());
     }
 
-    $objUri = new Uri();
-
-    $strPath = self::ENDPOINT . '/' . $objRequestor->getStrPackageId() . '/';
-    $strPath.= $objRequestor->getStrContentType();
-
-    return $this->objApi->get($objUri->withPath($strPath));
-  }
-
-  /**
-   * Gets a packages granules
-   *
-   * @param PackageAbstractRequestor $objRequestor
-   * @return array
-   * @throws LogicException
-   */
-  public function granules(PackageAbstractRequestor $objRequestor) : array
-  {
-    $this->requireStrPackageId($objRequestor);
-
-    $objUri = new Uri();
-    $objUri = $objUri->withQueryValue($objUri, 'pageSize', $objRequestor->getIntPageSize());
-    $objUri = $objUri->withQueryValue($objUri, 'offset', $objRequestor->getIntOffSet());
-
-    $strPath = self::ENDPOINT . '/' . $objRequestor->getStrPackageId() . '/granules';
-
-    return $this->objApi->getArray($objUri->withPath($strPath));
-  }
-
-  /**
-   * Get granule summary
-   *
-   * @param PackageAbstractRequestor $objRequestor
-   * @return array
-   * @throws LogicException
-   */
-  public function granuleSummary(PackageAbstractRequestor $objRequestor) : array
-  {
-    $this->requireStrPackageId($objRequestor);
-
-    if (empty($objRequestor->getStrGranuleId())) {
-      throw new \LogicException('PackageRequestor::strGranuleId is required');
+    if (!empty($objRequestor->getChapter()) {
+      $objUri = $objUri->withQueryValue($objUri, 'chapter', $objRequestor->getChapter());
     }
 
-    $objUri = new Uri();
-    $objUri = $objUri->withQueryValue($objUri, 'pageSize', $objRequestor->getIntPageSize());
-    $objUri = $objUri->withQueryValue($objUri, 'offset', $objRequestor->getIntOffSet());
+    if (!empty($objRequestor->getSubchapter()) {
+      $objUri = $objUri->withQueryValue($objUri, 'subchapter', $objRequestor->getSubchapter());
+    }
 
-    $strPath = self::ENDPOINT . '/' . $objRequestor->getStrPackageId() . '/granules/';
-    $strPath.= $objRequestor->getStrGranuleId() . '/summary';
+    if (!empty($objRequestor->getPart()) {
+      $objUri = $objUri->withQueryValue($objUri, 'part', $objRequestor->getPart());
+    }
 
-    return $this->objApi->getArray($objUri->withPath($strPath));
-  }
+    if (!empty($objRequestor->getSubpart()) {
+      $objUri = $objUri->withQueryValue($objUri, 'subpart', $objRequestor->getSubpart());
+    }
 
-  public function summaryDownload(PackageAbstractRequestor $objRequestor) : string {
-    $this->requireStrPackageId($objRequestor);
-    $this->requireDownloadType($objRequestor);
+    if (!empty($objRequestor->getSection()) {
+      $objUri = $objUri->withQueryValue($objUri, 'section', $objRequestor->getSection());
+    }
 
-    $objUri = new Uri();
-    $strPath = self::ENDPOINT . '/' . $objRequestor->getStrPackageId() . '/' . $objRequestor->getDownloadType();
-
-    return $this->objApi->getData($objUri->withPath($strPath));
-  }
-
-  private function requireDownloadType(PackageAbstractRequestor $objRequestor) : void {
-    if (empty($objRequestor->getDownloadType())) {
-      throw new \LogicException('PackageRequestor::getDownloadType is required');
+    if (!empty($objRequestor->getAppendix()) {
+      $objUri = $objUri->withQueryValue($objUri, 'appendix', $objRequestor->getAppendix());
     }
   }
 
-  private function requireStrPackageId(PackageAbstractRequestor $objRequestor) : void
-  {
-    if (empty($objRequestor->getStrPackageId())) {
-      throw new \LogicException('PackageRequestor::getStrPackageId is required');
+  /**
+   * Ancestors route returns all ancestors (including self)
+   * from a given level through the top title node
+   *
+   * @param VersionerRequestor $objRequestor
+   * @return array
+   */
+  public function ancestry(VersionerRequestor $objRequestor) : array {
+    $this->requireTitle($objRequestor);
+    $this->requireDate($objRequestor);
+
+    $objUri = new Uri();
+    $objUri = $objUri->withQueryValue($objUri, 'title', $objRequestor->getTitle());
+    $objUri = $objUri->withQueryValue($objUri, 'date', $objRequestor->getDate());
+    $this->standardSet($objRequestor, $objUri);
+
+    $strPath = self::ENDPOINT . '/ancestry/' . $objRequestor->getDate() . '/title-' . $objRequestor->getTitle() . '.json';
+    return $this->objApi->getArray($objUri->withPath($strPath));
+  }
+
+  public function full(VersionerRequestor $objRequestor) : array {
+    $this->requireTitle($objRequestor);
+    $this->requireDate($objRequestor);
+
+    $objUri = new Uri();
+    $objUri = $objUri->withQueryValue($objUri, 'title', $objRequestor->getTitle());
+    $objUri = $objUri->withQueryValue($objUri, 'date', $objRequestor->getDate());
+    $this->standardSet($objRequestor, $objUri);
+
+    $strPath = self::ENDPOINT . '/full/' . $objRequestor->getDate() . '/title-' . $objRequestor->getTitle() . '.xml';
+    return $this->objApi->parseXML($objUri->withPath($strPath));
+  }
+
+  public function structure(VersionerRequestor $objRequestor) : array {
+    $this->requireTitle($objRequestor);
+    $this->requireDate($objRequestor);
+
+    $strPath = self::ENDPOINT . '/structure/' . $objRequestor->getDate() . '/title-' . $objRequestor->getTitle() . '.json';
+    return $this->objApi->getArray($objUri->withPath($strPath));
+  }
+
+  public function versions() : array {
+    $strPath = self::ENDPOINT . '/versions.json';
+    return $this->objApi->getArray($objUri->withPath($strPath));
+  }
+
+  public function versionsTitle(VersionerRequestor $objRequestor) : array {
+    $this->requireTitle($objRequestor);
+    $strPath = self::ENDPOINT . '/versions/' . '/title-' . $objRequestor->getTitle() . '.json';
+    return $this->objApi->getArray($objUri->withPath($strPath));
+  }
+
+  public function corrections() : array {
+    $strPath = self::ENDPOINT . '/corrections.json';
+    return $this->objApi->getArray($objUri->withPath($strPath));
+  }
+
+  private function requireDate(VersionerRequestor $objRequestor) : void {
+    if (empty($objRequestor->getDate())) {
+      throw new \LogicException('Date is required.');
+    }
+  }
+
+  private function requireTitle(VersionerRequestor $objRequestor) : void {
+    if (empty($objRequestor->getTitle())) {
+      throw new \LogicException('Title is required.');
     }
   }
 }

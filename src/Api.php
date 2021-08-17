@@ -57,17 +57,15 @@ final class Api {
     return json_decode($objResponse->getBody()->getContents(), true);
   }
 
+  public function parseXML(Uri $objUri) : array {
+    $objResponse = $this->get($objUri)
+    $xml = simplexml_load_string($objResponse, "SimpleXMLElement", LIBXML_NOCDATA);
+    $json = json_encode($xml);
+    return json_decode($json, TRUE);
+  }
+
   public function getObjHttp() : Client {
     return $this->objHttp;
-  }
-
-  public function setStrApiKey(string $key) : self {
-    $this->strApiKey = $key;
-    return $this;
-  }
-
-  public function getStrApiKey() : string {
-    return $this->strApiKey;
   }
 
   public function getObjUri() : Uri {
