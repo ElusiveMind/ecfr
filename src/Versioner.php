@@ -26,31 +26,31 @@ final class Package {
    * The standard set of $objRequestors used for all search queries
    */
   public function standardSet(SearchRequestor $objRequestor, Uri &$objUri) : void {
-    if (!empty($objRequestor->getSubtitle()) {
+    if (!empty($objRequestor->getSubtitle())) {
       $objUri = $objUri->withQueryValue($objUri, 'subtitle', $objRequestor->getSubtitle());
     }
 
-    if (!empty($objRequestor->getChapter()) {
+    if (!empty($objRequestor->getChapter())) {
       $objUri = $objUri->withQueryValue($objUri, 'chapter', $objRequestor->getChapter());
     }
 
-    if (!empty($objRequestor->getSubchapter()) {
+    if (!empty($objRequestor->getSubchapter())) {
       $objUri = $objUri->withQueryValue($objUri, 'subchapter', $objRequestor->getSubchapter());
     }
 
-    if (!empty($objRequestor->getPart()) {
+    if (!empty($objRequestor->getPart())) {
       $objUri = $objUri->withQueryValue($objUri, 'part', $objRequestor->getPart());
     }
 
-    if (!empty($objRequestor->getSubpart()) {
+    if (!empty($objRequestor->getSubpart())) {
       $objUri = $objUri->withQueryValue($objUri, 'subpart', $objRequestor->getSubpart());
     }
 
-    if (!empty($objRequestor->getSection()) {
+    if (!empty($objRequestor->getSection())) {
       $objUri = $objUri->withQueryValue($objUri, 'section', $objRequestor->getSection());
     }
 
-    if (!empty($objRequestor->getAppendix()) {
+    if (!empty($objRequestor->getAppendix())) {
       $objUri = $objUri->withQueryValue($objUri, 'appendix', $objRequestor->getAppendix());
     }
   }
