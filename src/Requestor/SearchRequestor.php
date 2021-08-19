@@ -3,12 +3,12 @@
 namespace eCFR\Requestor;
 
 final class SearchRequestor{
-  private $query = NULL;
-  private $date = NULL;
-  private $lastModifiedAfter = NULL;
-  private $lastModifiedBefore = NULL;
-  private $lastModifiedOnOrAfter = NULL;
-  private $lastModifiedOnOrBefore = NULL;
+  private $query = '';
+  private $date = '';
+  private $lastModifiedAfter = '';
+  private $lastModifiedBefore = '';
+  private $lastModifiedOnOrAfter = '';
+  private $lastModifiedOnOrBefore = '';
   private $perPage = 20;
   private $page = 1;
   private $order = 'relevance';

@@ -32,7 +32,7 @@ final class Api {
       throw new LogicException('Uri must contain a valid path');
     }
     $objUri = $objUri->withHost(self::URL)->withScheme('https');
-    $this->objUri =$objUri;
+    $this->objUri = $objUri;
 
     $objResponse = $this->objHttp->get($this->objUri);
     return $objResponse;
@@ -58,7 +58,7 @@ final class Api {
   }
 
   public function parseXML(Uri $objUri) : array {
-    $objResponse = $this->get($objUri)
+    $objResponse = $this->get($objUri);
     $xml = simplexml_load_string($objResponse, "SimpleXMLElement", LIBXML_NOCDATA);
     $json = json_encode($xml);
     return json_decode($json, TRUE);
