@@ -7,7 +7,7 @@ use GuzzleHttp\Psr7\Response;
 use eCFR\Requestor\VersionerRequestor;
 use LogicException;
 
-final class Package {
+final class Versioner {
 
   use EndpointTrait;
 
@@ -25,7 +25,7 @@ final class Package {
   /**
    * The standard set of $objRequestors used for all search queries
    */
-  public function standardSet(SearchRequestor $objRequestor, Uri &$objUri) : void {
+  public function standardSet(VersionerRequestor $objRequestor, Uri &$objUri) : void {
     if (!empty($objRequestor->getSubtitle())) {
       $objUri = $objUri->withQueryValue($objUri, 'subtitle', $objRequestor->getSubtitle());
     }
@@ -75,7 +75,7 @@ final class Package {
     return $this->objApi->getArray($objUri->withPath($strPath));
   }
 
-  public function full(VersionerRequestor $objRequestor) : array {
+  public function full(VersionerRequestor $objRequestor) : string {
     $this->requireTitle($objRequestor);
     $this->requireDate($objRequestor);
 
@@ -89,6 +89,7 @@ final class Package {
   }
 
   public function structure(VersionerRequestor $objRequestor) : array {
+    $objUri = new Uri();
     $this->requireTitle($objRequestor);
     $this->requireDate($objRequestor);
 
@@ -97,28 +98,33 @@ final class Package {
   }
 
   public function versions() : array {
+    $objUri = new Uri();
     $strPath = self::ENDPOINT . '/versions.json';
     return $this->objApi->getArray($objUri->withPath($strPath));
   }
 
   public function versionsTitle(VersionerRequestor $objRequestor) : array {
     $this->requireTitle($objRequestor);
+    $objUri = new Uri();
     $strPath = self::ENDPOINT . '/versions/' . '/title-' . $objRequestor->getTitle() . '.json';
     return $this->objApi->getArray($objUri->withPath($strPath));
   }
 
   public function corrections() : array {
+    $objUri = new Uri();
     $strPath = self::ENDPOINT . '/corrections.json';
     return $this->objApi->getArray($objUri->withPath($strPath));
   }
 
   private function requireDate(VersionerRequestor $objRequestor) : void {
+    $objUri = new Uri();
     if (empty($objRequestor->getDate())) {
       throw new \LogicException('Date is required.');
     }
   }
 
   private function requireTitle(VersionerRequestor $objRequestor) : void {
+    $objUri = new Uri();
     if (empty($objRequestor->getTitle())) {
       throw new \LogicException('Title is required.');
     }

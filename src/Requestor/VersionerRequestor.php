@@ -2,17 +2,20 @@
 
 namespace eCFR\Requestor;
 
+use \DateTime;
+use \LogicException;
+
 final class VersionerRequestor {
 
-  private $date = NULL;
-  private $title = NULL;
-  private $subtitle = NULL;
-  private $chapter = NULL;
-  private $subchapter = NULL;
-  private $part = NULL;
-  private $subpart = NULL;
-  private $section = NULL;
-  private $appendix = NULL;
+  private $date = '';
+  private $title = '';
+  private $subtitle = '';
+  private $chapter = '';
+  private $subchapter = '';
+  private $part = '';
+  private $subpart = '';
+  private $section = '';
+  private $appendix = '';
 
   public function setDate(string $date) : self {
     if ($this->validateDate($date) === TRUE) {
@@ -45,17 +48,22 @@ final class VersionerRequestor {
   public function setPart(string $part) : self {
     $this->part = $part;
     return $this;
-  }    
+  }
+
+  public function setSubpart(string $subPart) : self {
+    $this->subPart = $subPart;
+    return $this;
+  }
 
   public function setSection(string $section) : self {
     $this->section = $section;
     return $this;
-  }    
+  }
 
   public function setAppendix(string $appendix) : self {
     $this->appendix = $appendix;
     return $this;
-  }    
+  }
   
   public function getDate() : string {
     return $this->date;
@@ -74,11 +82,11 @@ final class VersionerRequestor {
   }
 
   public function getSubChapter() : string {
-    return $this->subChapter;
+    return $this->subchapter;
   }
 
   public function getPart() : string {
-    return $this->getPart;
+    return $this->part;
   }
 
   public function getSubpart() : string {
@@ -101,6 +109,6 @@ final class VersionerRequestor {
     $d = DateTime::createFromFormat($format, $date);
     // The Y ( 4 digits year ) returns TRUE for any integer with any number 
     // of digits so changing the comparison from == to === fixes the issue.
-    return $d && $d->format($format) === $date;
+    return ($d && $d->format($format)) === $date;
   }
 }

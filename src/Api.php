@@ -57,11 +57,11 @@ final class Api {
     return json_decode($objResponse->getBody()->getContents(), true);
   }
 
-  public function parseXML(Uri $objUri) : array {
+  public function parseXML(Uri $objUri) : string {
     $objResponse = $this->get($objUri);
-    $xml = simplexml_load_string($objResponse, "SimpleXMLElement", LIBXML_NOCDATA);
-    $json = json_encode($xml);
-    return json_decode($json, TRUE);
+    $contents = $objResponse->getBody()->getContents();
+    //$xml = simplexml_load_string($objResponse->getBody()->getContents(), "SimpleXMLElement", LIBXML_NOCDATA);
+    return $contents;
   }
 
   public function getObjHttp() : Client {

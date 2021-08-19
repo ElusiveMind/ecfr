@@ -2,6 +2,9 @@
 
 namespace eCFR\Requestor;
 
+use \DateTime;
+use \LogicException;
+
 final class SearchRequestor{
   private $query = '';
   private $date = '';
@@ -129,6 +132,6 @@ final class SearchRequestor{
     $d = DateTime::createFromFormat($format, $date);
     // The Y ( 4 digits year ) returns TRUE for any integer with any number 
     // of digits so changing the comparison from == to === fixes the issue.
-    return $d && $d->format($format) === $date;
+    return ($d && $d->format($format)) === $date;
   }
 }
