@@ -1,5 +1,5 @@
 {
-  "name": "mbagnall/ecfr",
+  "name": "zivtech/ecfr-php",
   "description": "PHP library for the Electronic Code of Federal Regulations (eCFR)",
   "keywords": [
     "ecfr",
@@ -7,7 +7,7 @@
     "Federal Regulations",
     "Regulations"
   ],
-  "homepage": "https://github.com/ElusiveMind/ecfr",
+  "homepage": "https://github.com/zivtech/ecfr-php",
   "license": "MIT",
   "authors": [
     {
